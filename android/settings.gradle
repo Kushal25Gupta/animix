@@ -1,0 +1,25 @@
+include ':app'
+include ':spotify-auth', ':spotify-app-remote'
+
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+def properties = new Properties()
+
+assert localPropertiesFile.exists()
+localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
+
+def flutterSdkPath = properties.getProperty("flutter.sdk")
+assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+
+pluginManagement {
+    def flutterSdkPath = properties.getProperty("flutter.sdk")
+    assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+    def pluginsFile = new File(flutterSdkPath, '.flutter-plugins-dependencies')
+    
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle") {
+        name "flutter_gradle_plugin"
+    }
+}
+
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+}
